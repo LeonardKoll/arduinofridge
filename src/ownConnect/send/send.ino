@@ -11,10 +11,10 @@ void setup()
 // the loop function runs over and over again forever
 void loop()
 {
-  int dataInterval = 50;
+  int dataInterval = 2;
 
   Serial.print("started\n");
-  delay(15000);
+  delay(8000);
   Serial.print("now sending\n");
   
   digitalWrite(outPin, HIGH);

@@ -12,7 +12,7 @@ void setup()
 void loop()
 {
   Serial.print("started\n");
-  delay(10000);
+  delay(5000);
   Serial.print("listening\n");
   
   int rcvData[8] = {9,9,9,9,9,9,9,9};
@@ -23,7 +23,7 @@ void loop()
 
 void recvByte (int dest[8])
 {
-  int dataInterval = 50;
+  int dataInterval = 2;
   
 
   // Startsequenz
@@ -31,7 +31,7 @@ void recvByte (int dest[8])
   {
     if (digitalRead(inPin) == HIGH)
     {
-      delay(dataInterval +25);
+      delay(dataInterval + 1);
       break;
     }
   }
