@@ -11,34 +11,43 @@ void setup()
 // the loop function runs over and over again forever
 void loop()
 {
-  int dataInterval = 2;
+  Serial.print("Heartbeat...\n");
+  // 5 seconds of Heartbeat
+  for (int  i=0; i<3; i++)
+  {
+    digitalWrite(outPin, HIGH);
+    delay(2);
+    digitalWrite(outPin, LOW);
+    delay (1500);
+  }
 
-  Serial.print("started\n");
-  delay(8000);
-  Serial.print("now sending\n");
+
+  Serial.print("Sending\n");
+  // Start sending
+  digitalWrite(outPin, HIGH);
+  delay(1);
+  digitalWrite(outPin, LOW);
+  delay(1);
+
+  // Data
+  digitalWrite(outPin, LOW);
+  delay(1);
+  digitalWrite(outPin, HIGH);
+  delay(1);
+  digitalWrite(outPin, LOW);
+  delay(1);
+  digitalWrite(outPin, LOW);
+  delay(1);
+  digitalWrite(outPin, LOW);
+  delay(1);
+  digitalWrite(outPin, HIGH);
+  delay(1);
+  digitalWrite(outPin, HIGH);
+  delay(1);
+  digitalWrite(outPin, HIGH);
+  delay(1);
+  Serial.print("Sending done.\n");
   
-  digitalWrite(outPin, HIGH);
-  delay(dataInterval);
-
   digitalWrite(outPin, LOW);
-  delay(dataInterval);
-  digitalWrite(outPin, HIGH);
-  delay(dataInterval);
-  digitalWrite(outPin, LOW);
-  delay(dataInterval);
-  digitalWrite(outPin, LOW);
-  delay(dataInterval);
-  digitalWrite(outPin, LOW);
-  delay(dataInterval);
-  digitalWrite(outPin, HIGH);
-  delay(dataInterval);
-  digitalWrite(outPin, HIGH);
-  delay(dataInterval);
-  digitalWrite(outPin, HIGH);
-  delay(dataInterval);
-  
-  Serial.print("ok\n");
-  digitalWrite(outPin, LOW);
-
-  delay(500000);
+  delay(5000);
 }

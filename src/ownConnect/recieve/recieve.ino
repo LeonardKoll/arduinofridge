@@ -1,5 +1,5 @@
 int inPin = 2;
-
+long heartbeatAlarm = 2000;
 
 void setup()
 {
@@ -12,37 +12,79 @@ void setup()
 void loop()
 {
   Serial.print("started\n");
-  delay(5000);
-  Serial.print("listening\n");
   
   int rcvData[8] = {9,9,9,9,9,9,9,9};
-  recvByte(rcvData);
-  
-  delay(5000000);
+  while (true)
+  {
+    listen (rcvData, 8);
+  }
 }
 
-void recvByte (int dest[8])
+void listen(int dest[], int msgLength)
 {
-  int dataInterval = 2;
-  
+  long lastHeartbeat = millis();
+  int hbAlarm = 0;
 
   // Startsequenz
   while(true)
   {
+    delay(1);
+    
+    // Daten / Heartbeat lesen
     if (digitalRead(inPin) == HIGH)
     {
-      delay(dataInterval + 1);
-      break;
+      delay(1);
+      
+      // Heartbeat yes/no
+      if (digitalRead(inPin) == HIGH)
+      {
+        // Heartbeat
+        lastHeartbeat = millis();
+      }
+      else
+      {
+        delay(1);
+        // Data - switch to recv mode.
+        break;
+      } 
+    }
+
+    // Heartbeat analysieren
+    if (hbAlarm)
+    {
+      if (millis()-lastHeartbeat < heartbeatAlarm) 
+      {
+        hbAlarm = 0;
+        stop_heartbeatAlarm();
+      }
+    }
+    else
+    {
+      if (millis()-lastHeartbeat > heartbeatAlarm) 
+      {
+        hbAlarm = 1;
+        fire_heartbeatAlarm();
+      }
     }
   }
 
-  // Reveive
-  for (int i=0; i<8; i++)
+  // Daten Empfangen
+  for (int i=0; i<msgLength; i++)
   {
     dest[i] = digitalRead(inPin);
     Serial.print(dest[i]);
-    delay(dataInterval);
+    delay(1);
   }
-  
+  Serial.print("\n");
+}
+
+void fire_heartbeatAlarm ()
+{
+  Serial.print("Kein Heartbeat\n");
+}
+
+void stop_heartbeatAlarm ()
+{
+  Serial.print("Heartbeat back\n");
 }
 
