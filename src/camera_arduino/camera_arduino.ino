@@ -22,14 +22,23 @@
 #include <SPI.h>
 #include <SD.h>
 #include <SoftwareSerial.h>
-#include <Wire.h>
+#include <Connector.h>
 
 #define chipSelect 10
 
+void fireHBalarm ()
+{
+  Serial.print("Kein Heartbeat\n");
+}
+void stopHBalarm ()
+{
+  Serial.print("Heartbeat back\n");
+}
+
 SoftwareSerial cameraconnection = SoftwareSerial(2, 3);
 Adafruit_VC0706 cam = Adafruit_VC0706(&cameraconnection);
+Receiver receiver(4, 2000, fireHBalarm, stopHBalarm);
 
-bool snapBool = false;
 String snapStr = "";
 File myFile;
 
@@ -46,8 +55,6 @@ void setup() {
 #endif
 #endif
 
-  Wire.begin(8);                // join i2c bus with address #8
-  Wire.onReceive(receiveEvent); // register event
   
   Serial.begin(9600);
   Serial.println(F("VC0706 Camera snapshot test"));
@@ -95,27 +102,14 @@ void setup() {
 
 //=====================================================================
 void loop() {
+  
   //wait for event
-  delay(100);
-  if (snapBool) {
-    takeSnapshot();
-    snapBool = false;
-    snapStr = "";
-  }
-}
-
-//=====================================================================
-void receiveEvent(int howMany) {
-  String requestString = "";
-  while (0 < Wire.available()) { // loop through all but the last
-    char c = Wire.read(); // receive byte as a character
-    requestString += c;
-    //Serial.print(c);         // print the character
-  }
-  snapStr = requestString.substring(0, 10);
+  snapStr = "__________";
+  receiver.listen (&snapStr, 10);
   Serial.print(F("receiveEvent with request: "));
   Serial.println(snapStr);
-  snapBool = true;
+
+  takeSnapshot();
 }
 
 //=====================================================================

@@ -20,19 +20,19 @@
 
 #include <SPI.h>
 #include <MFRC522.h>
-#include <Wire.h>
+#include <Connector.h>
 
 #define BUTTON_PIN 3
 #define SS_PIN 10
 #define RST_PIN 9
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
-bool TEST_MODE = false; // if TEST_MODE == true, we print to 'Serial Monitor', else we write to camera_arduino
+bool TEST_MODE = true; // if TEST_MODE == true, we print to 'Serial Monitor', else we write to camera_arduino
+Sender sender(2);
 
 int last_button_value;
 
 
 void setup() {
-  Wire.begin(); // join i2c bus (address optional for master)
 
   if (TEST_MODE) Serial.begin(9600);   // Initiate a serial communication
   SPI.begin();      // Initiate  SPI bus
@@ -106,26 +106,20 @@ void open_fridge() {
   }
   if (request_uid == "no_uid") {
     if (TEST_MODE) Serial.println("no UID");
-    request_string += "N";
+    request_string += "N00000000";
   } else {
     if (TEST_MODE) Serial.println(request_uid);
     request_string += "Y";
     request_uid.replace(" ", ""); // remove whitespace
     request_string += request_uid;
   }
-  //if (TEST_MODE) Serial.println(request_string);
-  char request_char_array[10];
-  for (int i = 0; i < 10; i++) {
-    if(request_string[i]){
-      request_char_array[i] = request_string[i];
-    } else {
-      request_char_array[i] = '0';
-    }
-  }
 
-  Wire.beginTransmission(8);   // transmit to device #8
-  Wire.write(request_char_array);  // sends request_string
-  Wire.endTransmission();      // stop transmitting
+  sender.send(&request_string, 10);
+  if (TEST_MODE)
+  {
+    Serial.print("String sent: ");
+    Serial.print(request_string);
+  }
     
   delay(10000); // block because sending the snapshot from the camera to the sd-card takes some time
 }
