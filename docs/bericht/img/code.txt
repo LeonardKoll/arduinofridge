@@ -2,13 +2,13 @@ class Sender
 {
 public:
   Sender(int pin);
-  void heartbeat ();
+  void heartbeat();
   void send(String* msg, int msgLength);
 };
 
 class Receiver
 {
 public:
-  Receiver(int pin, int heartbeatAlarm, void (*fireAlarm)(),void (*stopAlarm)() );
+  Receiver(int pin, int heartbeatAlarm, void (*fireAlarm)(), void (*stopAlarm)() );
   void listen(String* dest, int msgLength);
 };
